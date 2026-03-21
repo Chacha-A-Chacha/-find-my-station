@@ -133,3 +133,18 @@ model SearchLog {
   @@index([createdAt])
   @@map("search_logs")
 }
+
+model FeatureSuggestion {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String   @default("other")
+  fileUrl     String?  @map("file_url")
+  contact     String?
+  status      String   @default("new")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("feature_suggestions")
+}
