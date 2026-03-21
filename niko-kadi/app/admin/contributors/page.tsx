@@ -37,7 +37,7 @@ export default async function ContributorsPage() {
               </tr>
             </thead>
             <tbody>
-              {contributors.map((c, idx) => (
+              {contributors.map((c: { id: string; displayName: string; identityType: string; contributionCount: number; createdAt: Date }, idx: number) => (
                 <tr
                   key={c.id}
                   className="border-b border-gray-700/50 hover:bg-gray-750 transition-colors"

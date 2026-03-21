@@ -22,4 +22,5 @@ export default defineConfig({
         password: process.env.DB_PASSWORD,
       }),
   },
-});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any);
