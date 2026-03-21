@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/client";
-import { Prisma } from "@prisma/client";
 import { logApiCall, logSearch } from "@/lib/admin/tracking";
 
 export async function GET(request: NextRequest) {
@@ -12,7 +11,8 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
   const skip = (page - 1) * limit;
 
-  const where: Prisma.ConstituencyWhereInput = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: Record<string, any> = {};
 
   if (county) {
     where.county = { slug: county };
