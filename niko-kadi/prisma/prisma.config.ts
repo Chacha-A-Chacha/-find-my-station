@@ -5,7 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
 
-const dbUrl = process.env.DATABASE_URL!;
+const dbUrl = process.env.DATABASE_URL;
 
 export default defineConfig({
   schema: path.join(__dirname, "schema.prisma"),
@@ -22,5 +22,4 @@ export default defineConfig({
         password: process.env.DB_PASSWORD,
       }),
   },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any);
+});
