@@ -1,13 +1,12 @@
 import path from "node:path";
 import dotenv from "dotenv";
-import { defineConfig } from "prisma/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
 
 const dbUrl = process.env.DATABASE_URL;
 
-export default defineConfig({
+export default {
   schema: path.join(__dirname, "schema.prisma"),
   datasource: {
     url: dbUrl,
@@ -22,4 +21,4 @@ export default defineConfig({
         password: process.env.DB_PASSWORD,
       }),
   },
-});
+};
