@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const counties = await prisma.county.findMany({ select: { slug: true } });
-    const countyPages: MetadataRoute.Sitemap = counties.map((c) => ({
+    const countyPages: MetadataRoute.Sitemap = counties.map((c: { slug: string }) => ({
       url: `${baseUrl}/county/${c.slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const constituencies = await prisma.constituency.findMany({
       select: { slug: true, updatedAt: true },
     });
-    const stationPages: MetadataRoute.Sitemap = constituencies.map((s) => ({
+    const stationPages: MetadataRoute.Sitemap = constituencies.map((s: { slug: string; updatedAt: Date }) => ({
       url: `${baseUrl}/station/${s.slug}`,
       lastModified: s.updatedAt,
       changeFrequency: "weekly" as const,
