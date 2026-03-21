@@ -113,7 +113,7 @@ export default function SuggestFeatureDrawer({
               <strong>Want to contribute code?</strong>{" "}
               Check the{" "}
               <a
-                href="https://github.com"
+                href="https://github.com/Chacha-A-Chacha/-find-my-station/blob/main/CONTRIBUTING.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-green-700 font-medium underline underline-offset-2"
