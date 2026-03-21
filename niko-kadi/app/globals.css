@@ -79,6 +79,22 @@ body {
   scrollbar-width: none;
 }
 
+/* Thin scrollbar for modals */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
 /* Global focus-visible ring for keyboard users */
 *:focus-visible {
   outline: 2px solid #16a34a;
