@@ -1,11 +1,35 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import path from "node:path";
+import dotenv from "dotenv";
 
-const dbUrl = process.env.DATABASE_URL || `file:${path.join(__dirname, "dev.db")}`;
-const adapter = new PrismaLibSql({ url: dbUrl });
-const prisma = new PrismaClient({ adapter } as never);
+dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
+
+function createClient() {
+  const dbUrl = process.env.DATABASE_URL || `file:${path.join(__dirname, "dev.db")}`;
+
+  if (dbUrl.startsWith("file:")) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PrismaLibSql } = require("@prisma/adapter-libsql");
+    const adapter = new PrismaLibSql({ url: dbUrl });
+    return new PrismaClient({ adapter } as never);
+  }
+
+  // PostgreSQL — individual connection vars
+  const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT) || 5432,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+  });
+  const adapter = new PrismaPg(pool);
+  return new PrismaClient({ adapter } as never);
+}
+
+const prisma = createClient();
 
 // ---------------------------------------------------------------------------
 // County data – all 47 Kenyan counties
