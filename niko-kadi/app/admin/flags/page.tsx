@@ -16,7 +16,7 @@ export default async function FlagsPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const rows = flags.map((f) => ({
+  const rows = flags.map((f: typeof flags[number]) => ({
     id: f.id,
     constituency: f.constituency.name,
     constituencySlug: f.constituency.slug,

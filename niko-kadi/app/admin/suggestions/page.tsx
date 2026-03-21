@@ -38,7 +38,7 @@ export default async function SuggestionsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {suggestions.map((s) => (
+          {suggestions.map((s: typeof suggestions[number]) => (
             <div key={s.id} className="bg-gray-800 rounded-xl p-4">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <h3 className="text-sm font-semibold text-white">{s.title}</h3>

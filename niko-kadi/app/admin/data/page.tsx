@@ -16,7 +16,7 @@ export default async function DataPage() {
     orderBy: { name: "asc" },
   });
 
-  const rows = constituencies.map((c) => ({
+  const rows = constituencies.map((c: typeof constituencies[number]) => ({
     id: c.id,
     name: c.name,
     slug: c.slug,

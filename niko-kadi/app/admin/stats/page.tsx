@@ -32,12 +32,12 @@ export default async function StatsPage() {
     }),
   ]);
 
-  const counties = countyBreakdown.map((c) => {
+  const counties = countyBreakdown.map((c: typeof countyBreakdown[number]) => {
     const verified = c.constituencies.filter(
-      (x) => x.verificationStatus === "verified"
+      (x: { verificationStatus: string }) => x.verificationStatus === "verified"
     ).length;
     const pending = c.constituencies.filter(
-      (x) => x.verificationStatus === "pending"
+      (x: { verificationStatus: string }) => x.verificationStatus === "pending"
     ).length;
     const unverified = c.constituencyCount - verified - pending;
     const pct =
