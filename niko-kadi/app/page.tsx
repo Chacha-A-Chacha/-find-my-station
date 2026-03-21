@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import HomeShell from "./HomeShell";
 
 async function getStats() {

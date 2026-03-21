@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Metadata } from "next";
 import PageShell from "@/components/layout/PageShell";
 import StationCard from "@/components/ui/StationCard";
