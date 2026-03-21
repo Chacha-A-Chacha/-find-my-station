@@ -53,7 +53,7 @@ export default async function StatsPage() {
     const d = new Date(thirtyDaysAgo.getTime() + i * 24 * 60 * 60 * 1000);
     contributionsByDay[d.toISOString().split("T")[0]] = 0;
   }
-  recentContributions.forEach((c) => {
+  recentContributions.forEach((c: { createdAt: Date }) => {
     const key = c.createdAt.toISOString().split("T")[0];
     if (contributionsByDay[key] !== undefined) contributionsByDay[key]++;
   });
