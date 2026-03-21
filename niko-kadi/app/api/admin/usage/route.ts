@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     select: { endpoint: true },
   });
   const endpointCounts: Record<string, number> = {};
-  allCalls.forEach((c) => {
+  allCalls.forEach((c: { endpoint: string }) => {
     endpointCounts[c.endpoint] = (endpointCounts[c.endpoint] || 0) + 1;
   });
   const topEndpoints = Object.entries(endpointCounts)
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     select: { path: true },
   });
   const pathCounts: Record<string, number> = {};
-  allViews.forEach((v) => {
+  allViews.forEach((v: { path: string }) => {
     pathCounts[v.path] = (pathCounts[v.path] || 0) + 1;
   });
   const topPages = Object.entries(pathCounts)

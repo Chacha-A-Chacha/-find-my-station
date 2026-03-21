@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   ]);
 
   const response = {
-    data: data.map((row) => ({
+    data: data.map((row: typeof data[number]) => ({
       slug: row.slug,
       name: row.name,
       county: row.county.name,

@@ -58,14 +58,14 @@ export async function checkVerificationThreshold(
   if (contributions.length === 0) return null;
 
   // Count unique devices
-  const uniqueDevices = new Set(contributions.map((c) => c.deviceFingerprint));
+  const uniqueDevices = new Set(contributions.map((c: { deviceFingerprint: string }) => c.deviceFingerprint));
   const count = uniqueDevices.size;
 
   if (count >= VERIFICATION_THRESHOLD) {
     const centroidLat =
-      contributions.reduce((sum, c) => sum + c.lat, 0) / contributions.length;
+      contributions.reduce((sum: number, c: { lat: number }) => sum + c.lat, 0) / contributions.length;
     const centroidLng =
-      contributions.reduce((sum, c) => sum + c.lng, 0) / contributions.length;
+      contributions.reduce((sum: number, c: { lng: number }) => sum + c.lng, 0) / contributions.length;
 
     await prisma.constituency.update({
       where: { id: constituencyId },

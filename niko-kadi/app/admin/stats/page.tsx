@@ -93,7 +93,7 @@ export default async function StatsPage() {
               </tr>
             </thead>
             <tbody>
-              {counties.map((county) => (
+              {counties.map((county: { name: string; slug: string; total: number; verified: number; pending: number; unverified: number; pct: number }) => (
                 <tr
                   key={county.slug}
                   className="border-b border-gray-700/50 hover:bg-gray-750 transition-colors"

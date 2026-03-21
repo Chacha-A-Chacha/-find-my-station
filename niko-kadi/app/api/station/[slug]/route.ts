@@ -43,7 +43,7 @@ export async function GET(
       confirmation_count: constituency.confirmationCount,
       verified_at: constituency.verifiedAt,
     },
-    contributions: constituency.contributions.map((c) => ({
+    contributions: constituency.contributions.map((c: typeof constituency.contributions[number]) => ({
       id: c.id,
       lat: c.lat,
       lng: c.lng,

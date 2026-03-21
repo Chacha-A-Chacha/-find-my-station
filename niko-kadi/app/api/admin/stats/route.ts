@@ -53,9 +53,9 @@ export async function GET() {
   ]);
 
   // Build county breakdown
-  const counties = countyBreakdown.map((c) => {
-    const verified = c.constituencies.filter((x) => x.verificationStatus === "verified").length;
-    const pending = c.constituencies.filter((x) => x.verificationStatus === "pending").length;
+  const counties = countyBreakdown.map((c: typeof countyBreakdown[number]) => {
+    const verified = c.constituencies.filter((x: { verificationStatus: string }) => x.verificationStatus === "verified").length;
+    const pending = c.constituencies.filter((x: { verificationStatus: string }) => x.verificationStatus === "pending").length;
     return {
       name: c.name,
       slug: c.slug,
@@ -74,7 +74,7 @@ export async function GET() {
     const d = new Date(thirtyDaysAgo.getTime() + i * 24 * 60 * 60 * 1000);
     contributionsByDay[d.toISOString().split("T")[0]] = 0;
   }
-  recentContributions.forEach((c) => {
+  recentContributions.forEach((c: { createdAt: Date }) => {
     const key = c.createdAt.toISOString().split("T")[0];
     if (contributionsByDay[key] !== undefined) contributionsByDay[key]++;
   });
