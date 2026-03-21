@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { verifySession } from "@/lib/admin/session";
 import Sidebar from "@/components/admin/Sidebar";
 
 export const metadata = {

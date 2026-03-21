@@ -10,14 +10,12 @@ const MapView = dynamic(() => import("./MapView"), { ssr: false });
 
 interface PinDropProps {
   constituencyId: string;
-  constituencyName: string;
   existingPins?: Array<{ lat: number; lng: number; label?: string }>;
   defaultCenter?: [number, number];
 }
 
 export default function PinDrop({
   constituencyId,
-  constituencyName,
   existingPins = [],
   defaultCenter = [-1.2921, 36.8219],
 }: PinDropProps) {

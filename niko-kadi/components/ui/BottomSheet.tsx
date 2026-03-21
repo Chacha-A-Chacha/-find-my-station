@@ -37,7 +37,6 @@ export default function BottomSheet({
   onSnapChange,
 }: BottomSheetProps) {
   const [snap, setSnap] = useState<SnapPoint>(defaultSnap);
-  const [mounted, setMounted] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -47,8 +46,6 @@ export default function BottomSheet({
   const dragStartHeight = useRef(0);
   const dragStartTime = useRef(0);
   const lastY = useRef(0);
-
-  useEffect(() => setMounted(true), []);
 
   /* Available height = viewport minus tab bar (56px). Safe-area is handled by CSS bottom offset. */
   const TAB_BAR_HEIGHT = 56;
@@ -277,13 +274,12 @@ export default function BottomSheet({
 
   /* ── Set initial height after mount ── */
   useEffect(() => {
-    if (!mounted) return;
     const el = sheetRef.current;
     if (el) {
       el.style.transition = "height 0.35s cubic-bezier(0.22, 1, 0.36, 1)";
       el.style.height = `${heightForSnap(defaultSnap)}px`;
     }
-  }, [mounted, defaultSnap, heightForSnap]);
+  }, [defaultSnap, heightForSnap]);
 
   return (
     <>

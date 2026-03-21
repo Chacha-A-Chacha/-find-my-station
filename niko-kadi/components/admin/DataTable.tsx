@@ -39,7 +39,7 @@ export default function DataTable({ rows }: { rows: Row[] }) {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    let result = rows.filter(
+    const result = rows.filter(
       (r) =>
         r.name.toLowerCase().includes(q) ||
         r.county.toLowerCase().includes(q) ||
