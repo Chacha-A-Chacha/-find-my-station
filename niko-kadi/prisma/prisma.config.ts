@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
 
 const dbUrl = process.env.DATABASE_URL;
 
-export default {
+const config = {
   schema: path.join(__dirname, "schema.prisma"),
   datasource: {
     url: dbUrl,
@@ -22,3 +22,5 @@ export default {
       }),
   },
 };
+
+export default config;
