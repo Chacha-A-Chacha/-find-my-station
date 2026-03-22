@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 
 interface GeolocationState {
   latitude: number | null;
@@ -19,40 +19,51 @@ export function useGeolocation() {
     loading: false,
   });
 
-  const requestLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      setState((prev) => ({
-        ...prev,
-        error: "Geolocation is not supported by your browser",
-      }));
-      return;
-    }
+  const resolveRef = useRef<((coords: { lat: number; lng: number; accuracy: number }) => void) | null>(null);
 
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+  const requestLocation = useCallback((): Promise<{ lat: number; lng: number; accuracy: number }> => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        const msg = "Geolocation is not supported by your browser";
+        setState((prev) => ({ ...prev, error: msg }));
+        reject(new Error(msg));
+        return;
+      }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          error: null,
-          loading: false,
-        });
-      },
-      (error) => {
-        let message = "Unable to get your location";
-        if (error.code === error.PERMISSION_DENIED) {
-          message = "Location permission denied. Please enable it in your browser settings.";
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          message = "Location information is unavailable.";
-        } else if (error.code === error.TIMEOUT) {
-          message = "Location request timed out.";
-        }
-        setState((prev) => ({ ...prev, error: message, loading: false }));
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    );
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      resolveRef.current = resolve;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+          };
+          setState({
+            latitude: coords.lat,
+            longitude: coords.lng,
+            accuracy: coords.accuracy,
+            error: null,
+            loading: false,
+          });
+          resolve(coords);
+        },
+        (error) => {
+          let message = "Unable to get your location";
+          if (error.code === error.PERMISSION_DENIED) {
+            message = "Location permission denied. Please enable it in your browser settings.";
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            message = "Location information is unavailable.";
+          } else if (error.code === error.TIMEOUT) {
+            message = "Location request timed out.";
+          }
+          setState((prev) => ({ ...prev, error: message, loading: false }));
+          reject(new Error(message));
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+    });
   }, []);
 
   return { ...state, requestLocation };

@@ -63,14 +63,31 @@ export default function StationShell({ station }: StationShellProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [pinDropMode, setPinDropMode] = useState(false);
   const [pinPoint, setPinPoint] = useState<{ lat: number; lng: number } | null>(null);
+  const [pinAccuracy, setPinAccuracy] = useState<number | null>(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [result, setResult] = useState<{ message: string; error?: boolean } | null>(null);
   const fingerprint = useFingerprint();
-  const { latitude, longitude, requestLocation } = useGeolocation();
+  const { error: geoError, requestLocation } = useGeolocation();
 
   const handleMapClick = (lat: number, lng: number) => {
     setPinPoint({ lat, lng });
+    setPinAccuracy(null);
     setPinDropMode(false);
+  };
+
+  const handleUseGPS = async () => {
+    setGpsLoading(true);
+    try {
+      const coords = await requestLocation();
+      setPinPoint({ lat: coords.lat, lng: coords.lng });
+      setPinAccuracy(coords.accuracy);
+      setPinDropMode(false);
+    } catch {
+      // error is set in the hook state
+    } finally {
+      setGpsLoading(false);
+    }
   };
 
   const isVerified = station.verification.status === "verified";
@@ -78,8 +95,8 @@ export default function StationShell({ station }: StationShellProps) {
 
   const mapCenter: [number, number] = hasCoords
     ? [station.verification.confirmed_lat!, station.verification.confirmed_lng!]
-    : latitude && longitude
-      ? [latitude, longitude]
+    : pinPoint
+      ? [pinPoint.lat, pinPoint.lng]
       : [-1.2921, 36.8219];
 
   const mapMarkers = hasCoords
@@ -326,54 +343,63 @@ export default function StationShell({ station }: StationShellProps) {
                 </div>
               ) : pinPoint ? (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between bg-green-50 border border-green-200 p-3 rounded-xl" role="status">
-                    <div>
-                      <p className="text-sm font-medium text-green-800">Pin dropped</p>
-                      <p className="text-xs text-green-600">{pinPoint.lat.toFixed(5)}, {pinPoint.lng.toFixed(5)}</p>
+                  <div className="bg-green-50 border border-green-200 p-3 rounded-xl" role="status">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-green-800">Pin dropped</p>
+                        <p className="text-xs text-green-600">{pinPoint.lat.toFixed(5)}, {pinPoint.lng.toFixed(5)}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => { setPinPoint(null); setPinAccuracy(null); setPinDropMode(true); }}
+                          className="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+                        >
+                          Redo
+                        </button>
+                        <button
+                          onClick={() => setModalOpen(true)}
+                          className="px-3 py-1.5 text-xs font-semibold text-white bg-green-700 rounded-lg hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+                        >
+                          Submit
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => { setPinPoint(null); setPinDropMode(true); }}
-                        className="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
-                      >
-                        Redo
-                      </button>
-                      <button
-                        onClick={() => setModalOpen(true)}
-                        className="px-3 py-1.5 text-xs font-semibold text-white bg-green-700 rounded-lg hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
-                      >
-                        Submit
-                      </button>
-                    </div>
+                    {pinAccuracy !== null && (
+                      <p className="text-xs text-green-600 mt-1.5">
+                        GPS accuracy: ~{Math.round(pinAccuracy)}m
+                      </p>
+                    )}
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="space-y-2">
+                  {/* Primary: I'm here (GPS) */}
+                  <button
+                    onClick={handleUseGPS}
+                    disabled={gpsLoading}
+                    className="w-full py-3 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 active:bg-green-800 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 disabled:opacity-60"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2a1 1 0 011 1v2.07A8.003 8.003 0 0118.93 11H21a1 1 0 110 2h-2.07A8.003 8.003 0 0113 18.93V21a1 1 0 11-2 0v-2.07A8.003 8.003 0 015.07 13H3a1 1 0 110-2h2.07A8.003 8.003 0 0111 5.07V3a1 1 0 011-1zm0 6a4 4 0 100 8 4 4 0 000-8z" />
+                    </svg>
+                    {gpsLoading ? "Getting location..." : "I\u2019m at this office"}
+                  </button>
+
+                  {/* Secondary: Tap map */}
                   <button
                     onClick={() => setPinDropMode(true)}
-                    className="flex-1 py-3 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 active:bg-green-800 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
+                    className="w-full py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 active:bg-gray-50 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Tap Map to Pin
+                    I know where it is (tap map)
                   </button>
-                  <button
-                    onClick={() => {
-                      requestLocation();
-                      if (latitude && longitude) {
-                        setPinPoint({ lat: latitude, lng: longitude });
-                      }
-                    }}
-                    className="py-3 px-4 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 active:bg-gray-50 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
-                    aria-label="Use my current GPS location"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="hidden sm:inline">Use GPS</span>
-                  </button>
+
+                  {geoError && (
+                    <p className="text-xs text-red-600 text-center">{geoError}</p>
+                  )}
                 </div>
               )}
 
