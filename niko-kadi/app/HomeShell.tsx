@@ -230,13 +230,18 @@ export default function HomeShell({
         <main id="station-list">
           {/* Filter chips */}
           <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 -mx-1 px-1" role="group" aria-label="Filter by status">
-            {["all", "verified", "pending", "unverified"].map((status) => {
+            {[
+              { value: "all", label: "All" },
+              { value: "verified", label: "Verified" },
+              { value: "pending", label: "Confirming" },
+              { value: "unverified", label: "Needs GPS" },
+            ].map(({ value, label }) => {
               const isActive =
-                (status === "all" && !statusFilter) || statusFilter === status;
+                (value === "all" && !statusFilter) || statusFilter === value;
               return (
                 <button
-                  key={status}
-                  onClick={() => handleStatusChange(status)}
+                  key={value}
+                  onClick={() => handleStatusChange(value)}
                   role="radio"
                   aria-checked={isActive}
                   className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 ${
@@ -245,7 +250,7 @@ export default function HomeShell({
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-200"
                   }`}
                 >
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {label}
                 </button>
               );
             })}

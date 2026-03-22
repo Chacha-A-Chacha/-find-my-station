@@ -255,7 +255,11 @@ export default function StationShell({ station }: StationShellProps) {
             {/* Confirmation progress */}
             <div className="bg-gray-50 rounded-xl p-3" role="progressbar" aria-valuenow={station.verification.confirmation_count} aria-valuemin={0} aria-valuemax={7} aria-label="Verification progress">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-medium text-gray-600">Confirmations</span>
+                <span className="text-xs font-medium text-gray-600">
+                  {station.verification.confirmation_count === 0
+                    ? "No GPS pins yet — be the first!"
+                    : `${7 - station.verification.confirmation_count} more to verify`}
+                </span>
                 <span className="text-xs text-gray-400">{station.verification.confirmation_count}/7</span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
