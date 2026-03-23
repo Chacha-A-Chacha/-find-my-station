@@ -24,7 +24,7 @@ export default function StationCard({
   return (
     <Link
       href={`/station/${slug}`}
-      className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100 hover:border-green-200 hover:shadow-sm transition-all active:scale-[0.98]"
+      className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition-all active:scale-[0.98]"
     >
       {/* Pin icon */}
       <div
@@ -56,15 +56,15 @@ export default function StationCard({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold text-gray-900 truncate">{name}</h3>
-        <p className="text-xs text-gray-500 mt-0.5">{county} County</p>
+        <h3 className="text-sm font-semibold text-slate-900 truncate">{name}</h3>
+        <p className="text-xs text-slate-500 mt-0.5">{county} County</p>
         {office_location && (
-          <p className="text-xs text-gray-400 mt-1 line-clamp-1">{office_location}</p>
+          <p className="text-xs text-slate-400 mt-1 line-clamp-1">{office_location}</p>
         )}
       </div>
 
       {/* Chevron */}
-      <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <svg className="w-4 h-4 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </Link>
