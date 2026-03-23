@@ -164,8 +164,8 @@ export default function StationShell({ station }: StationShellProps) {
       </Link>
       <div className="flex items-center justify-between">
         <div className="min-w-0">
-          <h1 className="text-base md:text-lg font-bold text-gray-900 truncate">{station.name}</h1>
-          <p className="text-xs text-gray-500">{station.county.name} County</p>
+          <h1 className="text-base md:text-lg font-bold text-slate-900 truncate">{station.name}</h1>
+          <p className="text-xs text-slate-500">{station.county.name} County</p>
         </div>
         <StatusBadge status={station.verification.status} />
       </div>
@@ -231,67 +231,84 @@ export default function StationShell({ station }: StationShellProps) {
       <BottomSheet defaultSnap="half" peekContent={peekContent} navLinks={panelNav}>
         <main id="station-details">
           {/* Office details */}
-          <section aria-label="Office details" className="space-y-3 mb-4">
-            {station.office_location && (
-              <div className="flex items-start gap-2.5">
-                <svg className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div>
-                  <p className="text-xs text-gray-400">Location</p>
-                  <p className="text-sm text-gray-900">{station.office_location}</p>
+          <section aria-label="Office details" className="mb-4">
+            <div className="bg-slate-50 rounded-xl p-4 space-y-3">
+              {station.office_location && (
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-400">Office Location</p>
+                    <p className="text-sm text-slate-900">{station.office_location}</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {station.landmark && (
-              <div className="flex items-start gap-2.5">
-                <svg className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <div>
-                  <p className="text-xs text-gray-400">Landmark</p>
-                  <p className="text-sm text-gray-900">{station.landmark}</p>
+              {station.landmark && (
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-400">Landmark</p>
+                    <p className="text-sm text-slate-900">{station.landmark}</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {station.distance_to_office && (
-              <div className="flex items-start gap-2.5">
-                <svg className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                <div>
-                  <p className="text-xs text-gray-400">Distance</p>
-                  <p className="text-sm text-gray-900">{station.distance_to_office}</p>
+              {station.distance_to_office && (
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-400">Distance</p>
+                    <p className="text-sm text-slate-900">{station.distance_to_office}</p>
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {/* Confirmation progress */}
-            <div className="bg-gray-50 rounded-xl p-3" role="progressbar" aria-valuenow={station.verification.confirmation_count} aria-valuemin={0} aria-valuemax={7} aria-label="Verification progress">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-medium text-gray-600">
-                  {station.verification.confirmation_count === 0
-                    ? "No GPS pins yet — be the first!"
-                    : `${7 - station.verification.confirmation_count} more to verify`}
-                </span>
-                <span className="text-xs text-gray-400">{station.verification.confirmation_count}/7</span>
-              </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-green-600 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min((station.verification.confirmation_count / 7) * 100, 100)}%` }}
-                />
-              </div>
+              )}
             </div>
           </section>
+
+          {/* Verification progress */}
+          {!isVerified && (
+            <section aria-label="Verification progress" className="mb-4">
+              <div className="bg-emerald-50 rounded-xl p-4" role="progressbar" aria-valuenow={station.verification.confirmation_count} aria-valuemin={0} aria-valuemax={7}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-emerald-900">
+                    {station.verification.confirmation_count === 0
+                      ? "GPS not yet verified"
+                      : `${station.verification.confirmation_count} of 7 confirmations`}
+                  </span>
+                  <span className="text-xs font-medium text-emerald-600">{station.verification.confirmation_count}/7</span>
+                </div>
+                <div className="h-2 bg-emerald-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(Math.min((station.verification.confirmation_count / 7) * 100, 100), 2)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-emerald-700 mt-2">
+                  {station.verification.confirmation_count === 0
+                    ? "Be the first to pin this location on the map"
+                    : `${7 - station.verification.confirmation_count} more ${7 - station.verification.confirmation_count === 1 ? "person" : "people"} needed to verify`}
+                </p>
+              </div>
+            </section>
+          )}
 
           {/* Navigation buttons (verified) */}
           {isVerified && hasCoords && station.navigation && (
             <section aria-label="Navigation options" className="mb-4">
-              <h2 className="text-xs font-medium text-gray-500 mb-2">Navigate with</h2>
+              <h2 className="text-sm font-semibold text-slate-900 mb-2">Get Directions</h2>
               <div className="grid grid-cols-3 gap-2">
                 {navOptions.slice(0, 3).map((opt) => (
                   <a
@@ -299,11 +316,11 @@ export default function StationShell({ station }: StationShellProps) {
                     href={station.navigation![opt.key]}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 active:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 active:bg-emerald-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                     aria-label={`Navigate with ${opt.label}`}
                   >
                     <span className="text-xl" aria-hidden="true">{opt.icon}</span>
-                    <span className="text-xs font-medium text-gray-600">{opt.label}</span>
+                    <span className="text-xs font-medium text-slate-600">{opt.label}</span>
                   </a>
                 ))}
               </div>
@@ -314,11 +331,11 @@ export default function StationShell({ station }: StationShellProps) {
                     href={station.navigation![opt.key]}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 active:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+                    className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 active:bg-emerald-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                     aria-label={`Navigate with ${opt.label}`}
                   >
                     <span className="text-lg" aria-hidden="true">{opt.icon}</span>
-                    <span className="text-xs font-medium text-gray-600">{opt.label}</span>
+                    <span className="text-xs font-medium text-slate-600">{opt.label}</span>
                   </a>
                 ))}
               </div>
@@ -328,7 +345,7 @@ export default function StationShell({ station }: StationShellProps) {
           {/* Pin drop CTA (unverified) */}
           {!isVerified && (
             <section aria-label="Contribute location" className="mb-4">
-              <h2 className="text-xs font-medium text-gray-500 mb-2">Know where this office is?</h2>
+              <h2 className="text-sm font-semibold text-slate-900 mb-2">Help verify this location</h2>
 
               {pinDropMode ? (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center" role="status">
@@ -416,20 +433,30 @@ export default function StationShell({ station }: StationShellProps) {
 
           {/* Contributors */}
           {station.contributions.length > 0 && (
-            <section aria-label="Contributors">
-              <h2 className="text-xs font-medium text-gray-500 mb-2">
-                Contributors ({station.contributions.length})
+            <section aria-label="Contributors" className="mb-4">
+              <h2 className="text-sm font-semibold text-slate-900 mb-2">
+                Contributors
               </h2>
-              <ul className="space-y-1.5">
-                {station.contributions.map((c) => (
-                  <li key={c.id} className="flex items-center justify-between py-1.5">
-                    <span className="text-sm text-gray-900">{c.contributor_name}</span>
-                    <time className="text-xs text-gray-400" dateTime={c.created_at}>
+              <div className="bg-slate-50 rounded-xl overflow-hidden">
+                {station.contributions.map((c, i) => (
+                  <div
+                    key={c.id}
+                    className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-slate-100" : ""}`}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <span className="text-xs font-bold text-emerald-600">
+                        {c.contributor_name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-slate-900 truncate">{c.contributor_name}</p>
+                    </div>
+                    <time className="text-xs text-slate-400 flex-shrink-0" dateTime={c.created_at}>
                       {new Date(c.created_at).toLocaleDateString()}
                     </time>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </section>
           )}
 
