@@ -47,6 +47,7 @@ export async function GET(request: NextRequest) {
       name: row.name,
       county: row.county.name,
       county_slug: row.county.slug,
+      office_location: row.officeLocation,
       status: row.verificationStatus,
       confirmations: row.confirmationCount,
       has_coordinates: !!(row.verifiedLat && row.verifiedLng),

@@ -18,6 +18,7 @@ interface ConstituencyItem {
   name: string;
   county: string;
   county_slug: string;
+  office_location: string | null;
   status: string;
   confirmations: number;
   has_coordinates: boolean;
