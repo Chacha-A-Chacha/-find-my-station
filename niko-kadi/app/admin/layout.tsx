@@ -16,17 +16,16 @@ export default async function AdminLayout({
   const session = await verifySession();
 
   return (
-    <div className="h-full bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-gray-950 text-gray-100 overflow-y-auto" style={{ height: "100vh", overflowY: "auto" }}>
       {session ? (
         <>
           <Sidebar />
-          <main className="md:ml-56 min-h-full pt-12 md:pt-0">
-            <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+          <main className="md:ml-56 min-h-screen pt-12 md:pt-0">
+            <div className="p-4 sm:p-6 lg:p-8 pb-16">{children}</div>
           </main>
         </>
       ) : (
-        // No sidebar for unauthenticated users (login page)
-        <main className="min-h-full">{children}</main>
+        <main className="min-h-screen">{children}</main>
       )}
     </div>
   );

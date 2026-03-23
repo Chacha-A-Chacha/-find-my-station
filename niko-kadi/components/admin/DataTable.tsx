@@ -144,10 +144,11 @@ export default function DataTable({ rows }: { rows: Row[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <Link
-                      href={`/admin/data/${row.slug}`}
-                      className="text-xs text-green-400 hover:text-green-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded"
+                      href={`/station/${row.slug}`}
+                      target="_blank"
+                      className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded"
                     >
-                      Edit
+                      View
                     </Link>
                   </td>
                 </tr>
