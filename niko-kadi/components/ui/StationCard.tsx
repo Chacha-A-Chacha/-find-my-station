@@ -24,16 +24,16 @@ export default function StationCard({
   return (
     <Link
       href={`/station/${slug}`}
-      className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition-all active:scale-[0.98]"
+      className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-emerald-100 hover:border-emerald-200 hover:shadow-sm transition-all active:scale-[0.98]"
     >
       {/* Pin icon */}
       <div
         className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
-          isVerified ? "bg-emerald-50" : "bg-slate-50"
+          isVerified ? "bg-emerald-100" : "bg-emerald-50"
         }`}
       >
         <svg
-          className={`w-5 h-5 ${isVerified ? "text-emerald-500" : "text-slate-400"}`}
+          className={`w-5 h-5 ${isVerified ? "text-emerald-600" : "text-emerald-400"}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -64,7 +64,7 @@ export default function StationCard({
       </div>
 
       {/* Chevron */}
-      <svg className="w-4 h-4 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <svg className="w-4 h-4 text-emerald-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </Link>
