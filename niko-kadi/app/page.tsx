@@ -2,19 +2,6 @@ export const dynamic = "force-dynamic";
 
 import HomeShell from "./HomeShell";
 
-async function getStats() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  try {
-    const res = await fetch(`${baseUrl}/api/stats`, {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
 async function getConstituencies(searchParams: Record<string, string | undefined>) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const params = new URLSearchParams();
@@ -40,16 +27,12 @@ export default async function HomePage({
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const resolvedParams = await searchParams;
-  const [stats, constituencies] = await Promise.all([
-    getStats(),
-    getConstituencies(resolvedParams),
-  ]);
+  const constituencies = await getConstituencies(resolvedParams);
 
   return (
     <HomeShell
       initialData={constituencies.data}
       initialPagination={constituencies.pagination}
-      stats={stats}
       initialSearch={resolvedParams.search || ""}
       initialStatus={resolvedParams.status || ""}
     />

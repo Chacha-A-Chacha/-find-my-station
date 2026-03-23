@@ -23,14 +23,6 @@ interface ConstituencyItem {
   has_coordinates: boolean;
 }
 
-interface StatsData {
-  verified: number;
-  pending: number;
-  total_constituencies: number;
-  total_contributions: number;
-  total_contributors: number;
-}
-
 interface HomeShellProps {
   initialData: ConstituencyItem[];
   initialPagination: {
@@ -39,7 +31,6 @@ interface HomeShellProps {
     total: number;
     pages: number;
   };
-  stats: StatsData | null;
   initialSearch?: string;
   initialStatus?: string;
 }
@@ -47,13 +38,12 @@ interface HomeShellProps {
 export default function HomeShell({
   initialData,
   initialPagination,
-  stats,
   initialSearch = "",
   initialStatus = "",
 }: HomeShellProps) {
   const router = useRouter();
   const [query, setQuery] = useState(initialSearch);
-  const [statusFilter, setStatusFilter] = useState(initialStatus);
+  const [statusFilter] = useState(initialStatus);
   const [results, setResults] = useState(initialData);
   const [pagination, setPagination] = useState(initialPagination);
   const [loading, setLoading] = useState(false);
@@ -94,10 +84,6 @@ export default function HomeShell({
     };
   }, [query, statusFilter, fetchResults]);
 
-  const handleStatusChange = (status: string) => {
-    setStatusFilter(status === "all" ? "" : status);
-  };
-
   const handleMarkerClick = useCallback(
     (slug: string) => {
       router.push(`/station/${slug}`);
@@ -110,10 +96,6 @@ export default function HomeShell({
       fetchResults(query, statusFilter, pagination.page + 1);
     }
   };
-
-  const verifiedPct = stats
-    ? Math.round((stats.verified / stats.total_constituencies) * 100)
-    : 0;
 
   /* ── Peek content (search bar — visible in all sheet states) ── */
   const peekContent = (
@@ -129,41 +111,33 @@ export default function HomeShell({
         </Link>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <label htmlFor="search-input" className="sr-only">Search stations</label>
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              id="search-input"
-              type="search"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (sheetSnap === "peek") setSheetSnap("half");
-              }}
-              onFocus={() => {
-                if (sheetSnap === "peek") setSheetSnap("half");
-              }}
-              placeholder="Search constituency or location..."
-              className="w-full h-10 pl-9 pr-3 rounded-xl bg-gray-100 text-sm placeholder:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus:bg-white border-0"
-            />
-          </div>
+      <div>
+        <label htmlFor="search-input" className="sr-only">Search stations</label>
+        <div className="relative">
+          <svg
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            id="search-input"
+            type="search"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (sheetSnap === "peek") setSheetSnap("half");
+            }}
+            onFocus={() => {
+              if (sheetSnap === "peek") setSheetSnap("half");
+            }}
+            placeholder="Search constituency or location..."
+            className="w-full h-10 pl-9 pr-3 rounded-xl bg-gray-100 text-sm placeholder:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus:bg-white border-0"
+          />
         </div>
-        {stats && (
-          <div className="flex-shrink-0 text-right" aria-label={`${verifiedPct}% verified`}>
-            <p className="text-xs font-bold text-green-700">{verifiedPct}%</p>
-            <p className="text-xs text-gray-400">verified</p>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -228,56 +202,6 @@ export default function HomeShell({
         onSnapChange={setSheetSnap}
       >
         <main id="station-list">
-          {/* Filter chips */}
-          <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 -mx-1 px-1" role="group" aria-label="Filter by status">
-            {[
-              { value: "all", label: "All" },
-              { value: "verified", label: "Verified" },
-              { value: "pending", label: "Confirming" },
-              { value: "unverified", label: "Needs GPS" },
-            ].map(({ value, label }) => {
-              const isActive =
-                (value === "all" && !statusFilter) || statusFilter === value;
-              return (
-                <button
-                  key={value}
-                  onClick={() => handleStatusChange(value)}
-                  role="radio"
-                  aria-checked={isActive}
-                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 ${
-                    isActive
-                      ? "bg-green-700 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-200"
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Stats summary */}
-          {stats && (
-            <div className="grid grid-cols-4 gap-2 mb-3 p-3 bg-gray-50 rounded-xl" aria-label="Verification statistics">
-              <div className="text-center">
-                <p className="text-lg font-bold text-green-700">{stats.verified}</p>
-                <p className="text-xs text-gray-500">Verified</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-yellow-600">{stats.pending}</p>
-                <p className="text-xs text-gray-500">Pending</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-gray-600">{stats.total_contributions}</p>
-                <p className="text-xs text-gray-500">Pins</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-gray-600">{stats.total_contributors}</p>
-                <p className="text-xs text-gray-500">People</p>
-              </div>
-            </div>
-          )}
-
           {/* Results count */}
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-gray-500" aria-live="polite">
