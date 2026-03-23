@@ -56,13 +56,7 @@ export default function StationCard({
       <div className="flex-1 min-w-0">
         <h3 className="text-sm font-semibold text-gray-900 truncate">{name}</h3>
         <p className="text-xs text-gray-500 mt-0.5 truncate">{county} County</p>
-        {isVerified && has_coordinates ? (
-          <p className="text-xs text-green-600 font-medium mt-1">Get directions</p>
-        ) : isPending ? (
-          <p className="text-xs text-amber-600 mt-1">{confirmations}/7 confirmed</p>
-        ) : (
-          <p className="text-xs text-blue-600 mt-1">Help locate this office</p>
-        )}
+        <p className="text-xs text-gray-400 mt-1">View details</p>
       </div>
 
       {/* Right chevron */}
