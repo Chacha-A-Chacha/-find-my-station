@@ -1,5 +1,4 @@
 import Link from "next/link";
-import StatusBadge from "./StatusBadge";
 
 interface StationCardProps {
   slug: string;
@@ -25,41 +24,51 @@ export default function StationCard({
   return (
     <Link
       href={`/station/${slug}`}
-      className="block p-4 bg-white rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-sm transition-all active:scale-[0.98]"
+      className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100 hover:border-green-200 hover:shadow-sm transition-all active:scale-[0.98]"
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{name}</h3>
-          <p className="text-sm text-gray-500 mt-0.5 truncate">{county} County</p>
-        </div>
-        {(isVerified || isPending || status === "flagged") && (
-          <StatusBadge status={status} />
-        )}
-      </div>
-      <div className="flex items-center gap-3 mt-3 text-xs text-gray-500">
-        {isVerified && has_coordinates ? (
-          <span className="flex items-center gap-1 text-green-600">
-            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-              <path
-                fillRule="evenodd"
-                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Get directions
-          </span>
+      {/* Left icon */}
+      <div
+        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+          isVerified
+            ? "bg-green-100"
+            : isPending
+              ? "bg-amber-50"
+              : "bg-gray-100"
+        }`}
+      >
+        {isVerified ? (
+          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
         ) : isPending ? (
-          <span className="text-amber-600">{confirmations}/7 confirmations</span>
+          <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         ) : (
-          <span className="flex items-center gap-1 text-blue-600">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Help locate this office
-          </span>
+          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
         )}
       </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <h3 className="text-sm font-semibold text-gray-900 truncate">{name}</h3>
+        <p className="text-xs text-gray-500 mt-0.5 truncate">{county} County</p>
+        {isVerified && has_coordinates ? (
+          <p className="text-xs text-green-600 font-medium mt-1">Get directions</p>
+        ) : isPending ? (
+          <p className="text-xs text-amber-600 mt-1">{confirmations}/7 confirmed</p>
+        ) : (
+          <p className="text-xs text-blue-600 mt-1">Help locate this office</p>
+        )}
+      </div>
+
+      {/* Right chevron */}
+      <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
     </Link>
   );
 }
