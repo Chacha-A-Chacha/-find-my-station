@@ -25,15 +25,14 @@ export default function MapView({
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const leafletRef = useRef<typeof L | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (leafletRef.current) return;
     (async () => {
       const mod = await import("leaflet");
-      await import("leaflet/dist/leaflet.css");
-      leafletRef.current = mod;
+      leafletRef.current = mod.default ?? mod;
       setReady(true);
     })();
   }, []);

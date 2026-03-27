@@ -37,7 +37,7 @@ export default function FullScreenMap({
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const droppedPinRef = useRef<L.Marker | null>(null);
-  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const leafletRef = useRef<typeof L | null>(null);
   const [ready, setReady] = useState(false);
 
   // Load leaflet dynamically
@@ -46,8 +46,7 @@ export default function FullScreenMap({
 
     (async () => {
       const mod = await import("leaflet");
-      await import("leaflet/dist/leaflet.css");
-      leafletRef.current = mod;
+      leafletRef.current = mod.default ?? mod;
       setReady(true);
     })();
   }, []);

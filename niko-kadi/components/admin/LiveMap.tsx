@@ -21,15 +21,14 @@ export default function LiveMap({ sessions }: LiveMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
-  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const leafletRef = useRef<typeof L | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (leafletRef.current) return;
     (async () => {
       const mod = await import("leaflet");
-      await import("leaflet/dist/leaflet.css");
-      leafletRef.current = mod;
+      leafletRef.current = mod.default ?? mod;
       setReady(true);
     })();
   }, []);
