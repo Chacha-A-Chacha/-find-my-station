@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
+import type L from "leaflet";
 
 interface MapViewProps {
   center: [number, number];
@@ -26,13 +25,27 @@ export default function MapView({
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (leafletRef.current) return;
+    (async () => {
+      const mod = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
+      leafletRef.current = mod;
+      setReady(true);
+    })();
+  }, []);
 
-    const map = L.map(mapRef.current).setView(center, zoom);
+  useEffect(() => {
+    if (!ready || !mapRef.current || mapInstanceRef.current) return;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const Leaf = leafletRef.current!;
+
+    const map = Leaf.map(mapRef.current).setView(center, zoom);
+
+    Leaf.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
@@ -51,22 +64,21 @@ export default function MapView({
       mapInstanceRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ready]);
 
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map) return;
+    const Leaf = leafletRef.current;
+    if (!map || !Leaf) return;
 
-    // Clear existing markers
     map.eachLayer((layer) => {
-      if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+      if (layer instanceof Leaf.Marker || layer instanceof Leaf.CircleMarker) {
         map.removeLayer(layer);
       }
     });
 
-    // Add markers
     markers.forEach((m) => {
-      const icon = L.divIcon({
+      const icon = Leaf.divIcon({
         className: "custom-marker",
         html: `<div style="width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);background:${m.verified ? "#16a34a" : "#f59e0b"};display:flex;align-items:center;justify-content:center;">
           ${m.verified ? '<svg width="12" height="12" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>' : ""}
@@ -75,7 +87,7 @@ export default function MapView({
         iconAnchor: [12, 12],
       });
 
-      const marker = L.marker([m.lat, m.lng], { icon }).addTo(map);
+      const marker = Leaf.marker([m.lat, m.lng], { icon }).addTo(map);
       if (m.label) {
         marker.bindPopup(m.label);
       }

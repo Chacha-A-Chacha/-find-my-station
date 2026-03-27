@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useCallback, useState } from "react";
+import type L from "leaflet";
 
 interface Marker {
   lat: number;
@@ -22,7 +21,6 @@ interface FullScreenMapProps {
   zoom?: number;
 }
 
-// Kenya center
 const KENYA_CENTER: [number, number] = [-0.0236, 37.9062];
 const KENYA_ZOOM = 7;
 
@@ -39,30 +37,44 @@ export default function FullScreenMap({
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const droppedPinRef = useRef<L.Marker | null>(null);
+  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Load leaflet dynamically
+  useEffect(() => {
+    if (leafletRef.current) return;
+
+    (async () => {
+      const mod = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
+      leafletRef.current = mod;
+      setReady(true);
+    })();
+  }, []);
 
   // Initialize map
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!ready || !containerRef.current || mapRef.current) return;
 
-    const map = L.map(containerRef.current, {
+    const Leaf = leafletRef.current!;
+
+    const map = Leaf.map(containerRef.current, {
       zoomControl: false,
       attributionControl: false,
     }).setView(center, zoom);
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    Leaf.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
       subdomains: "abcd",
     }).addTo(map);
 
-    // Add zoom control to top-right (desktop only)
-    L.control.zoom({ position: "topright" }).addTo(map);
+    Leaf.control.zoom({ position: "topright" }).addTo(map);
 
-    // Attribution bottom-left
-    L.control.attribution({ position: "bottomleft", prefix: false })
+    Leaf.control.attribution({ position: "bottomleft", prefix: false })
       .addAttribution('&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>')
       .addTo(map);
 
-    markersLayerRef.current = L.layerGroup().addTo(map);
+    markersLayerRef.current = Leaf.layerGroup().addTo(map);
     mapRef.current = map;
 
     return () => {
@@ -70,18 +82,19 @@ export default function FullScreenMap({
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ready]);
 
   // Update markers
   const updateMarkers = useCallback(() => {
     const layer = markersLayerRef.current;
-    if (!layer) return;
+    const Leaf = leafletRef.current;
+    if (!layer || !Leaf) return;
 
     layer.clearLayers();
 
     markers.forEach((m) => {
       const color = m.verified ? "#16a34a" : "#d97706";
-      const icon = L.divIcon({
+      const icon = Leaf.divIcon({
         className: "custom-marker",
         html: `<div style="width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);background:${color};display:flex;align-items:center;justify-content:center;">
           ${m.verified ? '<svg width="14" height="14" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>' : '<div style="width:8px;height:8px;border-radius:50%;background:white;"></div>'}
@@ -90,7 +103,7 @@ export default function FullScreenMap({
         iconAnchor: [14, 14],
       });
 
-      const marker = L.marker([m.lat, m.lng], { icon }).addTo(layer);
+      const marker = Leaf.marker([m.lat, m.lng], { icon }).addTo(layer);
       marker.on("click", () => {
         onMarkerClick?.(m.slug);
       });
@@ -123,7 +136,8 @@ export default function FullScreenMap({
   // Render dropped pin
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    const Leaf = leafletRef.current;
+    if (!map || !Leaf) return;
 
     if (droppedPinRef.current) {
       map.removeLayer(droppedPinRef.current);
@@ -132,7 +146,7 @@ export default function FullScreenMap({
 
     if (!droppedPin) return;
 
-    const icon = L.divIcon({
+    const icon = Leaf.divIcon({
       className: "dropped-pin",
       html: `<div style="width:36px;height:36px;border-radius:50%;border:3px solid white;box-shadow:0 2px 12px rgba(0,0,0,0.4);background:#dc2626;display:flex;align-items:center;justify-content:center;animation:bounce 0.3s ease-out;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
@@ -141,7 +155,7 @@ export default function FullScreenMap({
       iconAnchor: [18, 36],
     });
 
-    droppedPinRef.current = L.marker([droppedPin.lat, droppedPin.lng], { icon }).addTo(map);
+    droppedPinRef.current = Leaf.marker([droppedPin.lat, droppedPin.lng], { icon }).addTo(map);
   }, [droppedPin]);
 
   // Fly to center when it changes
@@ -151,7 +165,7 @@ export default function FullScreenMap({
     }
   }, [center, zoom]);
 
-  // Invalidate size when container resizes (e.g. side panel appears)
+  // Invalidate size when container resizes
   useEffect(() => {
     const container = containerRef.current;
     const map = mapRef.current;

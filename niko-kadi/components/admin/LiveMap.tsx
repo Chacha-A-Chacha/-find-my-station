@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
+import type L from "leaflet";
 
 interface Session {
   id: string;
@@ -22,52 +21,64 @@ export default function LiveMap({ sessions }: LiveMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
+  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const [ready, setReady] = useState(false);
 
-  // Initialize map once
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (leafletRef.current) return;
+    (async () => {
+      const mod = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
+      leafletRef.current = mod;
+      setReady(true);
+    })();
+  }, []);
 
-    const map = L.map(containerRef.current, {
+  useEffect(() => {
+    if (!ready || !containerRef.current || mapRef.current) return;
+
+    const Leaf = leafletRef.current!;
+
+    const map = Leaf.map(containerRef.current, {
       zoomControl: false,
       attributionControl: false,
       scrollWheelZoom: true,
     }).setView([0, 20], 2);
 
-    // Dark tile layer for admin theme
-    L.tileLayer(
+    Leaf.tileLayer(
       "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
       { maxZoom: 18, subdomains: "abcd" }
     ).addTo(map);
 
-    L.control.zoom({ position: "topright" }).addTo(map);
+    Leaf.control.zoom({ position: "topright" }).addTo(map);
 
-    markersRef.current = L.layerGroup().addTo(map);
+    markersRef.current = Leaf.layerGroup().addTo(map);
     mapRef.current = map;
 
     return () => {
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [ready]);
 
-  // Update markers when sessions change
   useEffect(() => {
     const layer = markersRef.current;
-    if (!layer) return;
+    const Leaf = leafletRef.current;
+    if (!layer || !Leaf) return;
 
     layer.clearLayers();
 
     const geoSessions = sessions.filter((s) => s.lat != null && s.lng != null);
 
     geoSessions.forEach((s) => {
-      const icon = L.divIcon({
+      const icon = Leaf.divIcon({
         className: "live-user-marker",
         html: `<div style="width:12px;height:12px;border-radius:50%;background:#4ade80;border:2px solid #166534;box-shadow:0 0 8px rgba(74,222,128,0.6);animation:pulse 2s infinite;"></div>`,
         iconSize: [12, 12],
         iconAnchor: [6, 6],
       });
 
-      const marker = L.marker([s.lat!, s.lng!], { icon }).addTo(layer);
+      const marker = Leaf.marker([s.lat!, s.lng!], { icon }).addTo(layer);
       marker.bindPopup(
         `<div style="font-size:12px;line-height:1.4;color:#111;">
           <strong>${s.city || "Unknown"}, ${s.country || "Unknown"}</strong><br/>
@@ -78,9 +89,8 @@ export default function LiveMap({ sessions }: LiveMapProps) {
       );
     });
 
-    // Fit bounds if there are markers
     if (geoSessions.length > 0 && mapRef.current) {
-      const bounds = L.latLngBounds(
+      const bounds = Leaf.latLngBounds(
         geoSessions.map((s) => [s.lat!, s.lng!] as [number, number])
       );
       mapRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
