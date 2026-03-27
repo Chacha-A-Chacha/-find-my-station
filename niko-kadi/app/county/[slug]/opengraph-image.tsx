@@ -1,13 +1,12 @@
 import { ImageResponse } from "next/og";
-import { prisma } from "@/lib/prisma/client";
 
-export const runtime = "nodejs";
 export const alt = "County Details";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const { prisma } = await import("@/lib/prisma/client");
 
   const county = await prisma.county.findUnique({
     where: { slug },
