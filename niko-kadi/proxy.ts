@@ -64,7 +64,7 @@ function recordLoginAttempt(ip: string) {
   loginAttempts.set(ip, entry);
 }
 
-// Clean up old entries every 5 minutes
+// Clean up old entries every 5 minutes to prevent memory leaks
 setInterval(() => {
   const now = Date.now();
   for (const [ip, timestamps] of ipRequests) {
@@ -79,7 +79,7 @@ setInterval(() => {
   }
 }, 5 * 60_000);
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method;
 
