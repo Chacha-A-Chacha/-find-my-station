@@ -2,6 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma/client";
+import { generateNavigationLinks } from "@/lib/navigation/deep-links";
 import StationShell from "./StationShell";
 
 interface StationData {
@@ -37,13 +39,58 @@ interface StationData {
 }
 
 async function getStation(slug: string): Promise<StationData | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   try {
-    const res = await fetch(`${baseUrl}/api/station/${slug}`, {
-      next: { revalidate: 30 },
+    const constituency = await prisma.constituency.findUnique({
+      where: { slug },
+      include: {
+        county: { select: { name: true, slug: true } },
+        contributions: {
+          include: {
+            contributor: { select: { displayName: true, identityType: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
-    if (!res.ok) return null;
-    return res.json();
+
+    if (!constituency) return null;
+
+    const data: StationData = {
+      id: constituency.id,
+      name: constituency.name,
+      slug: constituency.slug,
+      county: {
+        name: constituency.county.name,
+        slug: constituency.county.slug,
+      },
+      office_location: constituency.officeLocation,
+      landmark: constituency.landmark,
+      distance_to_office: constituency.distanceToOffice,
+      verification: {
+        status: constituency.verificationStatus,
+        confirmed_lat: constituency.verifiedLat,
+        confirmed_lng: constituency.verifiedLng,
+        confirmation_count: constituency.confirmationCount,
+        verified_at: constituency.verifiedAt?.toISOString() ?? null,
+      },
+      contributions: constituency.contributions.map((c) => ({
+        id: c.id,
+        lat: c.lat,
+        lng: c.lng,
+        contributor_name: c.contributor.displayName,
+        identity_type: c.contributor.identityType,
+        created_at: c.createdAt.toISOString(),
+      })),
+    };
+
+    if (constituency.verifiedLat && constituency.verifiedLng) {
+      data.navigation = generateNavigationLinks(
+        constituency.verifiedLat,
+        constituency.verifiedLng
+      );
+    }
+
+    return data;
   } catch {
     return null;
   }
