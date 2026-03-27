@@ -19,6 +19,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const isVerified = station?.verificationStatus === "verified";
   const confirmations = station?.confirmationCount ?? 0;
 
+  const statusText = isVerified
+    ? "GPS Verified"
+    : confirmations > 0
+      ? `${confirmations}/7 Confirmations`
+      : "Needs GPS Pin";
+
   return new ImageResponse(
     (
       <div
@@ -34,25 +40,26 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       >
         {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <div
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              background: "rgba(255,255,255,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "18px",
+            }}
           >
-            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
+            📍
+          </div>
           <span style={{ fontSize: "22px", fontWeight: 700, color: "#a7f3d0" }}>
             findmystation
           </span>
         </div>
 
-        {/* Center content */}
+        {/* Center */}
         <div
           style={{
             display: "flex",
@@ -62,8 +69,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             gap: "12px",
           }}
         >
-          {/* County label */}
-          {county && (
+          {county ? (
             <div
               style={{
                 fontSize: "20px",
@@ -75,9 +81,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             >
               {county} County
             </div>
-          )}
+          ) : null}
 
-          {/* Station name */}
           <div
             style={{
               fontSize: "52px",
@@ -90,8 +95,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             {name} Constituency
           </div>
 
-          {/* Office location */}
-          {location && (
+          {location ? (
             <div
               style={{
                 fontSize: "22px",
@@ -102,10 +106,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             >
               {location}
             </div>
-          )}
+          ) : null}
         </div>
 
-        {/* Bottom: Status */}
+        {/* Bottom status */}
         <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
           <div
             style={{
@@ -126,7 +130,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               }}
             />
             <span style={{ fontSize: "18px", fontWeight: 600, color: "white" }}>
-              {isVerified ? "GPS Verified" : confirmations > 0 ? `${confirmations}/7 Confirmations` : "Needs GPS Pin"}
+              {statusText}
             </span>
           </div>
 
