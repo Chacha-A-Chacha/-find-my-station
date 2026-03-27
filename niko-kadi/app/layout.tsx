@@ -25,6 +25,12 @@ export const metadata: Metadata = {
     description:
       "Crowdsourced GPS locations for all 290 IEBC constituency offices in Kenya.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "findmystation - Find Your IEBC Voter Registration Office",
+    description:
+      "Crowdsourced GPS locations for all 290 IEBC constituency offices in Kenya.",
+  },
   robots: {
     index: true,
     follow: true,
