@@ -96,9 +96,9 @@ body {
   scrollbar-color: #d1d5db transparent;
 }
 
-/* Global focus-visible ring for keyboard users */
+/* Global focus-visible ring */
 *:focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 0.5px solid #059669;
   outline-offset: 2px;
 }
 
