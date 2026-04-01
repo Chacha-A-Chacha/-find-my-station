@@ -4,12 +4,11 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
 
-const dbUrl = process.env.DATABASE_URL;
-
 const config = {
+  earlyAccess: true,
   schema: path.join(__dirname, "schema.prisma"),
   datasource: {
-    url: dbUrl,
+    url: process.env.DATABASE_URL!,
   },
   migrate: {
     adapter: async () =>
